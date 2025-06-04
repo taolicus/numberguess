@@ -49,8 +49,8 @@ canvas_state = st_canvas(
   background_color='#000000',
   fill_color='#FFFFFF',
   stroke_color='#FFFFFF',
-  width=150,
-  height=150,
+  width=300,
+  height=300,
   drawing_mode='freedraw',
   key='canvas'
 )
