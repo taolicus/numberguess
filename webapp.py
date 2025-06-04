@@ -2,9 +2,10 @@ import math
 import torch
 import torch.nn.functional as F
 import streamlit as st
+from PIL import Image
 from numberguess import model
 from torchvision import transforms
-from PIL import Image
+from streamlit_drawable_canvas import st_canvas
 
 # print(model)
 
@@ -15,31 +16,44 @@ if "confidence" not in st.session_state:
 
 def guess():
   print('Guessing...')
-
-  img = Image.open('./img/58654.png').convert('L')
+  if canvas_state.image_data is not None:
+    img = Image.fromarray(canvas_state.image_data.astype("uint8"), mode="RGBA")
+    img = img.resize((28, 28))
+    img = img.convert("L")
+  else:
+    st.write('Error while reading user drawing input')
 
   transform = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize((0.5,), (0.5,))
   ])
 
-  img_tensor = transform(img)
-  img_tensor = img_tensor.unsqueeze(0)
+  img_tensor = transform(img).unsqueeze(0)
 
   model.eval()
 
   with torch.no_grad():
-      output = model(img_tensor)
-      probabilities = F.softmax(output, dim=1)
-      st.session_state.prediction = torch.argmax(probabilities, dim=1).item()
-      st.session_state.confidence = math.trunc(probabilities[0][st.session_state.prediction].item() * 100)
+    output = model(img_tensor)
+    probabilities = F.softmax(output, dim=1)
+    st.session_state.prediction = torch.argmax(probabilities, dim=1).item()
+    st.session_state.confidence = math.trunc(probabilities[0][st.session_state.prediction].item() * 100)
+    print(f'Prediction: {st.session_state.prediction}')
 
-# print(f'Predicted class: {predicted_class}')
 
 
 st.title('Digit Recogniser')
 
 st.write('Draw a digit:')
+canvas_state = st_canvas(
+  stroke_width=10,
+  background_color='#000000',
+  fill_color='#FFFFFF',
+  stroke_color='#FFFFFF',
+  width=150,
+  height=150,
+  drawing_mode='freedraw',
+  key='canvas'
+)
 st.write('## Prediction:', st.session_state.prediction)
 st.write(f'Confidence: {st.session_state.confidence}%')
 
