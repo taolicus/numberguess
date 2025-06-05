@@ -1,8 +1,10 @@
+import db
 import math
 import torch
 import torch.nn.functional as F
 import streamlit as st
 from PIL import Image
+from datetime import datetime
 from numberguess import model
 from torchvision import transforms
 from streamlit_drawable_canvas import st_canvas
@@ -15,7 +17,7 @@ if "confidence" not in st.session_state:
   st.session_state.confidence = "--"
 
 def guess():
-  print('Guessing...')
+  # print('Guessing...')
   if canvas_state.image_data is not None:
     img = Image.fromarray(canvas_state.image_data.astype("uint8"), mode="RGBA")
     img = img.resize((28, 28))
@@ -37,9 +39,13 @@ def guess():
     probabilities = F.softmax(output, dim=1)
     st.session_state.prediction = torch.argmax(probabilities, dim=1).item()
     st.session_state.confidence = math.trunc(probabilities[0][st.session_state.prediction].item() * 100)
-    print(f'Prediction: {st.session_state.prediction}')
-
-
+    # print(f'Prediction: {st.session_state.prediction}')
+    # save prediction to postgresql
+    db.log({
+      'timestamp': datetime.now(),
+      'prediction': st.session_state.prediction,
+      'label': 1
+    })
 
 st.title('Digit Recogniser')
 
@@ -54,20 +60,31 @@ canvas_state = st_canvas(
   drawing_mode='freedraw',
   key='canvas'
 )
+
 st.write('## Prediction:', st.session_state.prediction)
+
 st.write(f'Confidence: {st.session_state.confidence}%')
 
 label = st.number_input('True label:', value=0, min_value=0, max_value=9)
 
 button = st.button("Guess", on_click=guess)
 
-# st.write(
-# f"""
-# ---
+# db.create_logs_table()
 
-# ## History
-# | timestamp | pred | label |
-# |-----------|------|-------|
-# ||||
-# """
-# )
+logs = db.fetch_logs()
+# print(logs)
+
+logs_table = """
+---
+## History
+| timestamp | pred | label |
+|-----------|------|-------|
+"""
+
+for row in logs:
+    _, timestamp, prediction, label = row
+    timestamp = timestamp.strftime("%Y-%m-%d %H:%M:%S")
+    logs_table += f"| {timestamp} | {prediction} | {label} |\n"
+
+# Display in Streamlit
+st.markdown(logs_table)
