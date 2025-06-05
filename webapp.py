@@ -15,6 +15,8 @@ if "prediction" not in st.session_state:
   st.session_state.prediction = "--"
 if "confidence" not in st.session_state:
   st.session_state.confidence = "--"
+if "label" not in st.session_state:
+  st.session_state.label = None
 
 def guess():
   # print('Guessing...')
@@ -44,7 +46,7 @@ def guess():
     db.log({
       'timestamp': datetime.now(),
       'prediction': st.session_state.prediction,
-      'label': 1
+      'label': st.session_state.label
     })
 
 st.title('Digit Recogniser')
@@ -65,7 +67,7 @@ st.write('## Prediction:', st.session_state.prediction)
 
 st.write(f'Confidence: {st.session_state.confidence}%')
 
-label = st.number_input('True label:', value=0, min_value=0, max_value=9)
+label = st.number_input('True label:', value=None, min_value=0, max_value=9, key="label")
 
 button = st.button("Guess", on_click=guess)
 
