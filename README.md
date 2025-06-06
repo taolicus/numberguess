@@ -1,6 +1,6 @@
 # Number Guess
 
-Foundation project for admission into the MLI AI residency.
+Foundation project for admission into the [MLI AI residency](https://programme.mlx.institute/about).
 
 Consists of a PyTorch Convolutional Neural Network trained on the MNIST dataset to recognise a single hand-drawn digit, plus a Streamlit web app to doodle a digit on a cavas, and log the prediction result into a PostgreSQL database.
 
