@@ -15,8 +15,14 @@ Next up, it would be cool to feed the user doodles back into the model for fine-
 
 ## Usage
 
-After installing docker with docker-compose, run
+After installing docker with docker-compose, create your own .env file with
 
 ```
-docker-compose up
+cp .env.example .env
+```
+
+and then run
+
+```
+docker compose up
 ```
