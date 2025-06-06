@@ -98,7 +98,6 @@ with col2:
 
 # db.create_logs_table()
 
-
 # print(logs)
 
 logs_table = """
@@ -107,7 +106,6 @@ logs_table = """
 | Timestamp | Pred | Label |
 |-----------|------|-------|
 """
-
 for row in st.session_state.logs:
     _, timestamp, prediction, label = row
     timestamp = timestamp.strftime("%Y-%m-%d %H:%M:%S")

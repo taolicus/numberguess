@@ -1,4 +1,5 @@
 # https://www.datatechnotes.com/2024/04/mnist-image-classification-with-pytorch.html
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -6,7 +7,6 @@ import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, Subset
 import os
-
 
 # Define transforms to normalize the data
 transform = transforms.Compose([
