@@ -1,11 +1,11 @@
 import db
 import math
 import torch
+import model
 import torch.nn.functional as F
 import streamlit as st
 from PIL import Image
 from datetime import datetime
-from numberguess import model
 from torchvision import transforms
 from streamlit_drawable_canvas import st_canvas
 
@@ -41,10 +41,10 @@ def guess():
 
   img_tensor = transform(img).unsqueeze(0)
 
-  model.eval()
+  numberguess = model.load()
 
   with torch.no_grad():
-    output = model(img_tensor)
+    output = numberguess(img_tensor)
     probabilities = F.softmax(output, dim=1)
     st.session_state.prediction = torch.argmax(probabilities, dim=1).item()
     st.session_state.confidence = math.trunc(
