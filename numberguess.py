@@ -29,7 +29,3 @@ class Model(nn.Module):
 
 model = Model()
 model.load_state_dict(torch.load(model_name))
-
-# run model
-# outputs = model(images)
-
