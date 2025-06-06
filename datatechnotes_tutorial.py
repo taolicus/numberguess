@@ -1,3 +1,4 @@
+# Taken from:
 # https://www.datatechnotes.com/2024/04/mnist-image-classification-with-pytorch.html
 
 import torch
