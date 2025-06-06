@@ -26,3 +26,7 @@ and then run
 ```
 docker compose up
 ```
+
+## Live demo
+
+If the service hasn't crashed for some reason, you can check it at http://tao.cl:8501/
