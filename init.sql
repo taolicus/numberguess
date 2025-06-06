@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS logs (
+  id SERIAL PRIMARY KEY,
+  timestamp TIMESTAMP NOT NULL,
+  prediction TEXT NOT NULL,
+  label TEXT NOT NULL
+);

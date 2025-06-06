@@ -12,3 +12,11 @@ After sucessfully running the tutorial code and generating the model file (`.pth
 Then I started looking into Streamlit and was pleasantly suprised by it's simplicty. I do JavaScript and React for a living and Python still feels foreign, but it's very fun to use after you get past the initial ecosystem setup.
 
 Next up, it would be cool to feed the user doodles back into the model for fine-tuning.
+
+## Usage
+
+After installing docker with docker-compose, run
+
+```
+docker-compose up
+```

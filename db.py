@@ -1,16 +1,19 @@
+import os
 import psycopg2
 
-db = psycopg2.connect(
-  database="postgres",
-  host="localhost",
-  user="postgres",
-  password="",
-  port="5432"
-)
+def get_connection():
+  return psycopg2.connect(
+    database=os.getenv("DB_NAME"),
+    host=os.getenv("DB_HOST"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASSWORD"),
+    port=os.getenv("DB_PORT")
+  )
 
 def log(data):
   row_id = None
   try:
+    db = get_connection()
     with db.cursor() as cursor:
       cursor.execute(
         '''
@@ -18,24 +21,21 @@ def log(data):
         VALUES (%s, %s, %s)
         RETURNING id;
         ''',
-        (
-          data['timestamp'],
-          data['prediction'],
-          data['label']
-        )
+        (data['timestamp'], data['prediction'], data['label'])
       )
-      rows = cursor.fetchone()
-      if rows:
-        row_id = rows[0]
-      db.commit()
+      row = cursor.fetchone()
+      if row:
+        row_id = row[0]
+    db.commit()
+    db.close()
   except (Exception, psycopg2.DatabaseError) as error:
-    print(error)
-  finally:
-    return row_id
+    print("Error inserting log:", error)
+  return row_id
 
 def fetch_logs(limit=100):
   logs = []
   try:
+    db = get_connection()
     with db.cursor() as cursor:
       cursor.execute(
         '''
@@ -48,24 +48,7 @@ def fetch_logs(limit=100):
       )
       logs = cursor.fetchall()
     db.commit()
+    db.close()
   except (Exception, psycopg2.DatabaseError) as error:
-    print(error)
-  finally:
-    return logs
-
-def create_logs_table():
-  try:
-    with db.cursor() as cursor:
-      cursor.execute(
-        '''
-        CREATE TABLE IF NOT EXISTS logs (
-          id SERIAL PRIMARY KEY,
-          timestamp TIMESTAMP NOT NULL,
-          prediction TEXT NOT NULL,
-          label TEXT NOT NULL
-        );
-        '''
-      )
-    db.commit()
-  except (Exception, psycopg2.DatabaseError) as error:
-    print("Error creating table:", error)
+    print("Error fetching logs:", error)
+  return logs
